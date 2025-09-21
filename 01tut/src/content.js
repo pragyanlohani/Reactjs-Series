@@ -1,8 +1,9 @@
 
 import {useState } from "react";
+import {FaTrashAlt} from "react-icons/fa"
 const Content = () =>{
 
-         const [item,setitem] = useState([
+         const [items,setitem] = useState([
         {
             id: 1,
             checked: true,
@@ -19,6 +20,19 @@ const Content = () =>{
             item: "Item 3"
         }
     ]);
+
+    const handelChecked = (id) =>{
+         const listItem = items.map((items) => items.id === id?{...items, checked:! items.checked} : items);
+         setitem(listItem);
+         localStorage.setItem("shoping list",JSON.stringify(listItem));
+    
+        };
+
+        const handelDelete = (id) =>{
+         const listItem = items.filter((items) => items.id !== id)
+         setitem(listItem);
+         localStorage.setItem("shoping list",JSON.stringify(listItem));
+        };
 
 
 
@@ -50,14 +64,36 @@ const Content = () =>{
 return (
 
     <main>
-        <ul>
-          {items.map((items) => (
-            <li className="item"></li>
+      {items.length ? (
+            <ul>
+              {items.map((items) => (
+                <li className="item" key ={items.id} >
 
+                  <input type = "checkbox" 
+                  onChange={() =>  handelChecked (items.id) }
+                  checked={items.checked}>
 
+                  </input>
+                  <label
+                  onDoubleClick={() =>  handelChecked (items.id) }
+                  style={(items.checked) ? {textDecoration : "line-through"} :null }
+
+                  >{items.item}</label>
+                  <FaTrashAlt 
+                  onClick={() => handelDelete(items.id)}
+                  role ="button" 
+                  tabIndex="0" />
+                </li>
+              
+     
           ))}
-        </ul>
 
+        
+          
+        </ul>
+     ) :(
+          <p style={{margin:"2rem"} }> your list is empty</p>
+        )}
 
       {/* <p>
         hello {name}!
