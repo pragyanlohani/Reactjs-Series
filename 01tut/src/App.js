@@ -1,60 +1,67 @@
-
 import './App.css';
 import Header from './header';
 import Content from './content';
 import Footer from './fotter';
 import { useState } from 'react';
+import AddItem from './AddItem';
+import SearchItem from './SearchItem'; // ✅ Fix import
 
 function App() {
+  const [items, setItems] = useState(
+    JSON.parse(localStorage.getItem("shoppingList")) || []
+  );
 
-           const [items,setitem] = useState([
-        {
-            id: 1,
-            checked: true,
-            item: "One half pound bag of Cocoa Covered Almonds Unsalted"
-        },
-        {
-            id: 2,
-            checked: false,
-            item: "Item 2"
-        },
-        {
-            id: 3,
-            checked: false,
-            item: "Item 3"
-        }
-    ]);
+  const [search, setSearch] = useState('');
+  const [newItem, setNewItem] = useState('');
 
+  const setAndSaveItems = (newItems) => {
+    setItems(newItems);
+    localStorage.setItem("shoppingList", JSON.stringify(newItems));
+  };
 
+  const addItem = (itemName) => {
+    const id = items.length ? items[items.length - 1].id + 1 : 1;
+    const myNewItem = { id, checked: false, item: itemName };
+    const listItems = [...items, myNewItem];
+    setAndSaveItems(listItems);
+  };
 
-    const handelChecked = (id) =>{
-         const listItem = items.map((items) => items.id === id?{...items, checked:! items.checked} : items);
-         setitem(listItem);
-         localStorage.setItem("shoping list",JSON.stringify(listItem));
-    
-        };
+  const handleChecked = (id) => {
+    const listItems = items.map((item) =>
+      item.id === id ? { ...item, checked: !item.checked } : item
+    );
+    setAndSaveItems(listItems);
+  };
 
-        const handelDelete = (id) =>{
-         const listItem = items.filter((items) => items.id !== id)
-         setitem(listItem);
-         localStorage.setItem("shoping list",JSON.stringify(listItem));
-        };
+  const handleDelete = (id) => {
+    const listItems = items.filter((item) => item.id !== id);
+    setAndSaveItems(listItems);
+  };
 
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!newItem) return;
+    addItem(newItem);
+    setNewItem('');
+  };
 
   return (
-    
     <div className="App">
-     <Header title = "Groceries list"/>
-     <Content 
-      items = {items}
-      handelChecked ={handelChecked}
-      handelDelete = {handelDelete}
-     />
-     <Footer 
-     length = {items.lenght}
-     
-     />
+      <Header title="Groceries list" />
+      <SearchItem search={search} setSearch={setSearch} /> 
+      <AddItem
+        newItem={newItem}
+        setNewItem={setNewItem}
+        handleSubmit={handleSubmit}
+      />
+      <Content
+        items={items.filter(item =>
+          item.item.toLowerCase().includes(search.toLowerCase()) 
+        )}
+        handleChecked={handleChecked}
+        handleDelete={handleDelete}
+      />
+      <Footer length={items.length} />
     </div>
   );
 }

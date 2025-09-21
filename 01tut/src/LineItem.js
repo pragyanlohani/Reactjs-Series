@@ -1,24 +1,29 @@
-import {FaTrashAlt} from "react-icons/fa"
-const LineItem = ({items,handelChecked,handelDelete}) =>{
-    return (
- <li className="item" key ={items.id} >
+import { FaTrashAlt } from "react-icons/fa";
 
-                  <input type = "checkbox" 
-                  onChange={() =>  handelChecked (items.id) }
-                  checked={items.checked}>
+const LineItem = ({ item, handleChecked, handleDelete }) => {
+  return (
+    <li className="item">
+      <input
+        type="checkbox"
+        onChange={() => handleChecked(item.id)}
+        checked={item.checked}
+      />
 
-                  </input>
-                  <label
-                  onDoubleClick={() =>  handelChecked (items.id) }
-                  style={(items.checked) ? {textDecoration : "line-through"} :null }
+      <label
+        onDoubleClick={() => handleChecked(item.id)}
+        style={item.checked ? { textDecoration: "line-through" } : null}
+      >
+        {item.item}
+      </label>
 
-                  >{items.item}</label>
-                  <FaTrashAlt 
-                  onClick={() => handelDelete(items.id)}
-                  role ="button" 
-                  tabIndex="0" />
-                </li>
-    )
-}
+      <FaTrashAlt
+        onClick={() => handleDelete(item.id)}
+        role="button"
+        tabIndex="0"
+        style={{ color: "red", cursor: "pointer", marginLeft: "10px" }}
+      />
+    </li>
+  );
+};
 
-export default LineItem
+export default LineItem;
